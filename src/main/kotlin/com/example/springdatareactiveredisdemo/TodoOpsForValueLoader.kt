@@ -6,7 +6,7 @@ import org.springframework.data.redis.core.ReactiveRedisOperations
 import org.springframework.stereotype.Component
 
 @Component
-class TodoLoader(
+class TodoOpsForValueLoader(
     private val reactiveRedisOperations: ReactiveRedisOperations<String, Todo>,
 ) {
     suspend fun set(key: String, value: Todo): Boolean {
@@ -21,5 +21,12 @@ class TodoLoader(
             .opsForValue()
             .get(key)
             .awaitSingleOrNull()
+    }
+
+    suspend fun del(key: String): Boolean {
+        return reactiveRedisOperations
+            .opsForValue()
+            .delete(key)
+            .awaitSingle()
     }
 }
