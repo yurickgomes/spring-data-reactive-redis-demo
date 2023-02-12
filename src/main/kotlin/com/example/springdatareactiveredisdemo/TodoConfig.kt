@@ -27,10 +27,14 @@ class TodoConfig(
         reactiveRedisConnectionFactory: ReactiveRedisConnectionFactory,
     ): ReactiveRedisTemplate<String, Todo> {
         val keySerializer = StringRedisSerializer()
-        val valueSerializer = Jackson2JsonRedisSerializer(Todo::class.java)
+        val serializer = Jackson2JsonRedisSerializer(Todo::class.java)
         val builder: RedisSerializationContext.RedisSerializationContextBuilder<String, Todo> =
             RedisSerializationContext.newSerializationContext(keySerializer)
-        val context = builder.value(valueSerializer).build()
+        val context = builder
+            .value(serializer)
+            .hashKey(serializer)
+            .hashValue(serializer)
+            .build()
 
         return ReactiveRedisTemplate(reactiveRedisConnectionFactory, context)
     }
