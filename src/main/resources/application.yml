@@ -1,3 +1,11 @@
+logging.level.io.lettuce.core: DEBUG
+
 redis:
-  host: localhost
-  port: 6379
+  read-from-replica: true
+  cluster-mode: false
+  master:
+    host: localhost
+    port: 6379
+  replica:
+    host: localhost
+    port: 6380
