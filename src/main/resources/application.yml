@@ -1,11 +1,18 @@
 logging.level.io.lettuce.core: DEBUG
 
-redis:
-  read-from-replica: true
-  cluster-mode: false
-  master:
+spring:
+  redis:
     host: localhost
     port: 6379
-  replica:
-    host: localhost
-    port: 6380
+    #password: supersecretpassword
+    ssl: false # you may have to change this prop to true if not running locally
+    timeout: 3000
+    static-topology: # custom property, not a default spring redis property
+      enabled: false # AWS Elasticache requires static topology when cluster mode is disabled
+      replica-nodes: localhost:6380 # comma separated list of "host:port"
+### spring.redis.cluster has higher precedence over other properties,
+### uncomment the section below if you want to try out cluster mode
+#    cluster:
+#      nodes: localhost:6379 # lettuce can auto-discovery the cluster topology, so 1 master node is enough
+#      max-redirects: 5
+
