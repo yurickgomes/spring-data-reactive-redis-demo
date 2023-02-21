@@ -55,7 +55,7 @@ class RedisConfig(
 
     @Bean
     fun lettuceClientConfigurationBuilderCustomizer(): LettuceClientConfigurationBuilderCustomizer {
-        // read from replica on cluster mode
+        // read from replica even on cluster mode
         return LettuceClientConfigurationBuilderCustomizer { it.readFrom(ReadFrom.REPLICA_PREFERRED) }
     }
 
