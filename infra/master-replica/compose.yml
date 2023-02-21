@@ -1,0 +1,21 @@
+version: 3.9
+
+services:
+  redis-master:
+    #image: redis/redis-stack:6.2.6-v4
+    image: redis:6.2.10-alpine
+    restart: always
+    container_name: redis-master
+    network_mode: host
+    command: 'redis-server --port 6379'
+
+  
+  redis-replica:
+    depends_on: redis-master
+    #image: redis/redis-stack:6.2.6-v4
+    image: redis:6.2.10-alpine
+    restart: always
+    container_name: redis-replica
+    network_mode: host
+    command: 'redis-server --port 6380 --replicaof localhost 6379' 
+
