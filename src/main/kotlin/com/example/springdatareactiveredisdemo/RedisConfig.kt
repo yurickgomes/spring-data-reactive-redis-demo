@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurat
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory
+import org.springframework.data.redis.connection.RedisPassword
 import org.springframework.data.redis.connection.RedisStaticMasterReplicaConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
@@ -20,6 +21,8 @@ import java.time.Duration
 class RedisConfig(
     @Value("\${spring.redis.host}")
     private val redisHost: String,
+    @Value("\${spring.redis.password}")
+    private val redisPassword: String,
     @Value("\${spring.redis.port}")
     private val redisPort: Int,
     @Value("\${spring.redis.ssl}")
@@ -30,10 +33,11 @@ class RedisConfig(
     private val redisStaticReplicaNodes: String,
 ) {
     @Bean
-    @ConditionalOnProperty(prefix = "spring.data.redis.static-topology", name = ["enabled"], havingValue = "true")
+    @ConditionalOnProperty(prefix = "spring.redis.static-topology", name = ["enabled"], havingValue = "true")
     fun reactiveRedisConnectionFactory(): ReactiveRedisConnectionFactory {
         val clientConfigBuilder = LettuceClientConfiguration
             .builder()
+            .readFrom(ReadFrom.REPLICA_PREFERRED)
             .commandTimeout(Duration.ofMillis(redisTimeout))
 
         if (redisSsl) {
@@ -42,15 +46,16 @@ class RedisConfig(
 
         val clientConfig = clientConfigBuilder.build()
         // AWS Elasticache doesn't allow topology discovery, so a static topology must be informed
-        val serverConfig = RedisStaticMasterReplicaConfiguration(redisHost, redisPort)
+        val serverStaticConfig = RedisStaticMasterReplicaConfiguration(redisHost, redisPort)
+        serverStaticConfig.password = RedisPassword.of(redisPassword)
         redisStaticReplicaNodes.split(',').forEach {
             val replicaSplit = it.split(':')
             val replicaHost = replicaSplit[0]
             val replicaPort = replicaSplit[1].toInt()
-            serverConfig.addNode(replicaHost, replicaPort)
+            serverStaticConfig.addNode(replicaHost, replicaPort)
         }
 
-        return LettuceConnectionFactory(serverConfig, clientConfig)
+        return LettuceConnectionFactory(serverStaticConfig, clientConfig)
     }
 
     @Bean

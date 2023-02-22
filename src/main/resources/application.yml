@@ -4,7 +4,7 @@ spring:
   redis:
     host: localhost
     port: 6379
-    #password: supersecretpassword
+    password:
     ssl: false # you may have to change this prop to true if not running locally
     timeout: 3000
     static-topology: # custom property, not a default spring redis property
