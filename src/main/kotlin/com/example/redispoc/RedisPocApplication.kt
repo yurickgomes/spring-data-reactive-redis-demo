@@ -1,11 +1,11 @@
-package com.example.springdatareactiveredisdemo
+package com.example.redispoc
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class SpringDataReactiveRedisDemoApplication
+class RedisPocApplication
 
 fun main(args: Array<String>) {
-	runApplication<SpringDataReactiveRedisDemoApplication>(*args)
+	runApplication<RedisPocApplication>(*args)
 }

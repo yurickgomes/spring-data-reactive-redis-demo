@@ -1,11 +1,14 @@
 root = true
 
 [*]
-end_of_line = lf
-insert_final_newline = true
 charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
 max_line_length = 120
-trim_trailing_whitespace = true
+tab_width = 4
 
-[{*.md, *.properties}]
-trim_trailing_whitespace = false
+[{*.yaml,*.yml}]
+indent_size = 2
+
